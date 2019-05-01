@@ -35,118 +35,111 @@ type Formatter func(val interface{}) string
 //   * colors positive values Green
 func FormatNumber(format string) Formatter {
 	return func(val interface{}) string {
-		if isNumber(val) {
-			switch reflect.TypeOf(val).Kind() {
-			case reflect.Int:
-				if number, ok := val.(int); ok {
-					if number < 0 {
-						return colorsNumberNegative.Sprintf("-"+format, -number)
-					} else if number > 0 {
-						return colorsNumberPositive.Sprintf(format, number)
-					} else {
-						return colorsNumberZero.Sprintf(format, number)
-					}
+		switch reflect.TypeOf(val).Kind() {
+		case reflect.Int:
+			if number, ok := val.(int); ok {
+				if number < 0 {
+					return colorsNumberNegative.Sprintf("-"+format, -number)
 				}
-			case reflect.Int8:
-				if number, ok := val.(int8); ok {
-					if number < 0 {
-						return colorsNumberNegative.Sprintf("-"+format, -number)
-					} else if number > 0 {
-						return colorsNumberPositive.Sprintf(format, number)
-					} else {
-						return colorsNumberZero.Sprintf(format, number)
-					}
+				if number > 0 {
+					return colorsNumberPositive.Sprintf(format, number)
 				}
-			case reflect.Int16:
-				if number, ok := val.(int16); ok {
-					if number < 0 {
-						return colorsNumberNegative.Sprintf("-"+format, -number)
-					} else if number > 0 {
-						return colorsNumberPositive.Sprintf(format, number)
-					} else {
-						return colorsNumberZero.Sprintf(format, number)
-					}
+				return colorsNumberZero.Sprintf(format, number)
+			}
+		case reflect.Int8:
+			if number, ok := val.(int8); ok {
+				if number < 0 {
+					return colorsNumberNegative.Sprintf("-"+format, -number)
 				}
-			case reflect.Int32:
-				if number, ok := val.(int32); ok {
-					if number < 0 {
-						return colorsNumberNegative.Sprintf("-"+format, -number)
-					} else if number > 0 {
-						return colorsNumberPositive.Sprintf(format, number)
-					} else {
-						return colorsNumberZero.Sprintf(format, number)
-					}
+				if number > 0 {
+					return colorsNumberPositive.Sprintf(format, number)
 				}
-			case reflect.Int64:
-				if number, ok := val.(int64); ok {
-					if number < 0 {
-						return colorsNumberNegative.Sprintf("-"+format, -number)
-					} else if number > 0 {
-						return colorsNumberPositive.Sprintf(format, number)
-					} else {
-						return colorsNumberZero.Sprintf(format, number)
-					}
+				return colorsNumberZero.Sprintf(format, number)
+			}
+		case reflect.Int16:
+			if number, ok := val.(int16); ok {
+				if number < 0 {
+					return colorsNumberNegative.Sprintf("-"+format, -number)
 				}
-			case reflect.Uint:
-				if number, ok := val.(uint); ok {
-					if number > 0 {
-						return colorsNumberPositive.Sprintf(format, number)
-					} else {
-						return colorsNumberZero.Sprintf(format, number)
-					}
+				if number > 0 {
+					return colorsNumberPositive.Sprintf(format, number)
 				}
-			case reflect.Uint8:
-				if number, ok := val.(uint8); ok {
-					if number > 0 {
-						return colorsNumberPositive.Sprintf(format, number)
-					} else {
-						return colorsNumberZero.Sprintf(format, number)
-					}
+				return colorsNumberZero.Sprintf(format, number)
+			}
+		case reflect.Int32:
+			if number, ok := val.(int32); ok {
+				if number < 0 {
+					return colorsNumberNegative.Sprintf("-"+format, -number)
 				}
-			case reflect.Uint16:
-				if number, ok := val.(uint16); ok {
-					if number > 0 {
-						return colorsNumberPositive.Sprintf(format, number)
-					} else {
-						return colorsNumberZero.Sprintf(format, number)
-					}
+				if number > 0 {
+					return colorsNumberPositive.Sprintf(format, number)
 				}
-			case reflect.Uint32:
-				if number, ok := val.(uint32); ok {
-					if number > 0 {
-						return colorsNumberPositive.Sprintf(format, number)
-					} else {
-						return colorsNumberZero.Sprintf(format, number)
-					}
+				return colorsNumberZero.Sprintf(format, number)
+			}
+		case reflect.Int64:
+			if number, ok := val.(int64); ok {
+				if number < 0 {
+					return colorsNumberNegative.Sprintf("-"+format, -number)
 				}
-			case reflect.Uint64:
-				if number, ok := val.(uint64); ok {
-					if number > 0 {
-						return colorsNumberPositive.Sprintf(format, number)
-					} else {
-						return colorsNumberZero.Sprintf(format, number)
-					}
+				if number > 0 {
+					return colorsNumberPositive.Sprintf(format, number)
 				}
-			case reflect.Float32:
-				if number, ok := val.(float32); ok {
-					if number < 0 {
-						return colorsNumberNegative.Sprintf("-"+format, -number)
-					} else if number > 0 {
-						return colorsNumberPositive.Sprintf(format, number)
-					} else {
-						return colorsNumberZero.Sprintf(format, number)
-					}
+				return colorsNumberZero.Sprintf(format, number)
+			}
+		case reflect.Uint:
+			if number, ok := val.(uint); ok {
+				if number > 0 {
+					return colorsNumberPositive.Sprintf(format, number)
 				}
-			case reflect.Float64:
-				if number, ok := val.(float64); ok {
-					if number < 0 {
-						return colorsNumberNegative.Sprintf("-"+format, -number)
-					} else if number > 0 {
-						return colorsNumberPositive.Sprintf(format, number)
-					} else {
-						return colorsNumberZero.Sprintf(format, number)
-					}
+				return colorsNumberZero.Sprintf(format, number)
+			}
+		case reflect.Uint8:
+			if number, ok := val.(uint8); ok {
+				if number > 0 {
+					return colorsNumberPositive.Sprintf(format, number)
 				}
+				return colorsNumberZero.Sprintf(format, number)
+			}
+		case reflect.Uint16:
+			if number, ok := val.(uint16); ok {
+				if number > 0 {
+					return colorsNumberPositive.Sprintf(format, number)
+				}
+				return colorsNumberZero.Sprintf(format, number)
+			}
+		case reflect.Uint32:
+			if number, ok := val.(uint32); ok {
+				if number > 0 {
+					return colorsNumberPositive.Sprintf(format, number)
+				}
+				return colorsNumberZero.Sprintf(format, number)
+			}
+		case reflect.Uint64:
+			if number, ok := val.(uint64); ok {
+				if number > 0 {
+					return colorsNumberPositive.Sprintf(format, number)
+				}
+				return colorsNumberZero.Sprintf(format, number)
+			}
+		case reflect.Float32:
+			if number, ok := val.(float32); ok {
+				if number < 0 {
+					return colorsNumberNegative.Sprintf("-"+format, -number)
+				}
+				if number > 0 {
+					return colorsNumberPositive.Sprintf(format, number)
+				}
+				return colorsNumberZero.Sprintf(format, number)
+			}
+		case reflect.Float64:
+			if number, ok := val.(float64); ok {
+				if number < 0 {
+					return colorsNumberNegative.Sprintf("-"+format, -number)
+				}
+				if number > 0 {
+					return colorsNumberPositive.Sprintf(format, number)
+				}
+				return colorsNumberZero.Sprintf(format, number)
 			}
 		}
 		// ultimate fallback

@@ -4,6 +4,8 @@ import (
 	"github.com/jedib0t/go-pretty/text"
 )
 
+// ColumnConfig contains configurations that determine and modify the way the
+// contents of the column get rendered.
 type ColumnConfig struct {
 	// Name is the name of the Column as it appears in the first Header row.
 	// If a Header is not provided, or the name is not found in the header, this
