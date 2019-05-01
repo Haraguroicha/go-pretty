@@ -17,16 +17,36 @@ type ColumnConfig struct {
 
 	// Align defines the horizontal alignment
 	Align text.Align
+	// AlignFooter defines the horizontal alignment of Footer rows
+	AlignFooter text.Align
+	// AlignFooter defines the horizontal alignment of Header rows
+	AlignHeader text.Align
 
-	// IsIndexColumn sets the column as the Index column and enables it to be
-	// styled differently using Style.Color (ColorOptions).
-	IsIndexColumn bool
+	// Colors defines the colors to be used on the column
+	Colors text.Colors
+	// ColorsFooter defines the colors to be used on the column in Footer rows
+	ColorsFooter text.Colors
+	// ColorsFooter defines the colors to be used on the column in Header rows
+	ColorsHeader text.Colors
 
 	// Formatter is a custom-function that changes the way the value gets
-	// rendered to the console. Refer to formatter.go for ready-to-use Formatter
-	// functions.
-	Formatter Formatter
+	// rendered to the console. Refer to text/formatter.go for ready-to-use
+	// Formatter functions.
+	Formatter text.Formatter
+	// FormatterFooter is like Formatter for Footer rows
+	FormatterFooter text.Formatter
+	// FormatterFooter is like Formatter for Header rows
+	FormatterHeader text.Formatter
 
 	// VAlign defines the vertical alignment
 	VAlign text.VAlign
+	// VAlignFooter defines the vertical alignment in Footer rows
+	VAlignFooter text.VAlign
+	// VAlignHeader defines the vertical alignment in Header rows
+	VAlignHeader text.VAlign
+
+	// WidthMin defines the minimum character length of the column
+	WidthMin int
+	// WidthMax defines the maximum character length of the column
+	WidthMax int
 }

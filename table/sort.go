@@ -39,17 +39,17 @@ type rowsSorter struct {
 	sortedIndices []int
 }
 
-// sortRows sorts and returns the row indices in Sorted order as directed by
-// Table.sortBy which can be set using Table.SortBy(...)
-func (t *Table) sortRows(rows []rowStr) []int {
-	sortedIndices := make([]int, len(rows))
-	for idx := range rows {
+// getSortedRowIndices sorts and returns the row indices in Sorted order as
+// directed by Table.sortBy which can be set using Table.SortBy(...)
+func (t *Table) getSortedRowIndices() []int {
+	sortedIndices := make([]int, len(t.rows))
+	for idx := range t.rows {
 		sortedIndices[idx] = idx
 	}
 
 	if t.sortBy != nil && len(t.sortBy) > 0 {
 		sort.Sort(rowsSorter{
-			rows:          rows,
+			rows:          t.rows,
 			sortBy:        t.parseSortBy(t.sortBy),
 			sortedIndices: sortedIndices,
 		})

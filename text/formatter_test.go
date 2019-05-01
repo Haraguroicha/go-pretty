@@ -1,9 +1,8 @@
-package table
+package text
 
 import (
 	"fmt"
 	"github.com/go-openapi/strfmt"
-	"github.com/jedib0t/go-pretty/text"
 	"github.com/stretchr/testify/assert"
 	"reflect"
 	"strings"
@@ -11,8 +10,8 @@ import (
 	"time"
 )
 
-func TestFormatNumber(t *testing.T) {
-	signColorsMap := map[string]text.Colors{
+func TestNewNumberFormatter(t *testing.T) {
+	signColorsMap := map[string]Colors{
 		"negative": colorsNumberNegative,
 		"positive": colorsNumberPositive,
 		"zero":     nil,
@@ -59,7 +58,7 @@ func TestFormatNumber(t *testing.T) {
 
 	for sign, valuesFormatMap := range colorValuesMap {
 		for value, format := range valuesFormatMap {
-			formatter := FormatNumber(format)
+			formatter := NewNumberFormatter(format)
 			expected := signColorsMap[sign].Sprintf(format, value)
 			if sign == "negative" {
 				expected = strings.Replace(expected, "-0", "-00", 1)
@@ -73,7 +72,7 @@ func TestFormatNumber(t *testing.T) {
 	}
 
 	// invalid input
-	assert.Equal(t, "foo", FormatNumber("%05d")("foo"))
+	assert.Equal(t, "foo", NewNumberFormatter("%05d")("foo"))
 }
 
 type jsonTest struct {
@@ -89,8 +88,8 @@ type jsonNestTest struct {
 	C float64
 }
 
-func TestFormatJSON(t *testing.T) {
-	formatter := FormatJSON("", "    ")
+func TestNewJSONFormatter(t *testing.T) {
+	formatter := NewJSONFormatter("", "    ")
 
 	// instance of a struct
 	inputObj := jsonTest{
@@ -139,7 +138,7 @@ func TestFormatJSON(t *testing.T) {
 	assert.Equal(t, expectedOutput, formatter(input))
 }
 
-func TestFormatTime(t *testing.T) {
+func TestNewTimeFormatter(t *testing.T) {
 	inStr := "2010-11-12T13:14:15-07:00"
 	inTime, err := time.Parse(time.RFC3339, inStr)
 	assert.Nil(t, err)
@@ -147,7 +146,7 @@ func TestFormatTime(t *testing.T) {
 
 	location, err := time.LoadLocation("America/Los_Angeles")
 	assert.Nil(t, err)
-	formatter := FormatTime(time.RFC3339, location)
+	formatter := NewTimeFormatter(time.RFC3339, location)
 	expected := "2010-11-12T12:14:15-08:00"
 	assert.Equal(t, expected, formatter(inStr))
 	assert.Equal(t, expected, formatter(inTime))
@@ -155,7 +154,7 @@ func TestFormatTime(t *testing.T) {
 
 	location, err = time.LoadLocation("Asia/Singapore")
 	assert.Nil(t, err)
-	formatter = FormatTime(time.UnixDate, location)
+	formatter = NewTimeFormatter(time.UnixDate, location)
 	expected = "Sat Nov 13 04:14:15 +08 2010"
 	assert.Equal(t, expected, formatter(inStr))
 	assert.Equal(t, expected, formatter(inTime))
@@ -163,14 +162,14 @@ func TestFormatTime(t *testing.T) {
 
 	location, err = time.LoadLocation("Europe/London")
 	assert.Nil(t, err)
-	formatter = FormatTime(time.RFC3339, location)
+	formatter = NewTimeFormatter(time.RFC3339, location)
 	expected = "2010-11-12T20:14:15Z"
 	assert.Equal(t, expected, formatter(inStr))
 	assert.Equal(t, expected, formatter(inTime))
 	assert.Equal(t, expected, formatter(inDateTime))
 }
 
-func TestFormatUnixTime(t *testing.T) {
+func TestNewUnixTimeFormatter(t *testing.T) {
 	inStr := "2010-11-12T13:14:15-07:00"
 	inTime, err := time.Parse(time.RFC3339, inStr)
 	assert.Nil(t, err)
@@ -178,7 +177,7 @@ func TestFormatUnixTime(t *testing.T) {
 
 	location, err := time.LoadLocation("America/Los_Angeles")
 	assert.Nil(t, err)
-	formatter := FormatUnixTime(time.RFC3339, location)
+	formatter := NewUnixTimeFormatter(time.RFC3339, location)
 	expected := "2010-11-12T12:14:15-08:00"
 	assert.Equal(t, expected, formatter(inUnixTime), "seconds")
 	assert.Equal(t, expected, formatter(inUnixTime*1000), "milliseconds")
@@ -187,7 +186,7 @@ func TestFormatUnixTime(t *testing.T) {
 
 	location, err = time.LoadLocation("Asia/Singapore")
 	assert.Nil(t, err)
-	formatter = FormatUnixTime(time.UnixDate, location)
+	formatter = NewUnixTimeFormatter(time.UnixDate, location)
 	expected = "Sat Nov 13 04:14:15 +08 2010"
 	assert.Equal(t, expected, formatter(inUnixTime), "seconds")
 	assert.Equal(t, expected, formatter(inUnixTime*1000), "milliseconds")
@@ -196,7 +195,7 @@ func TestFormatUnixTime(t *testing.T) {
 
 	location, err = time.LoadLocation("Europe/London")
 	assert.Nil(t, err)
-	formatter = FormatUnixTime(time.RFC3339, location)
+	formatter = NewUnixTimeFormatter(time.RFC3339, location)
 	expected = "2010-11-12T20:14:15Z"
 	assert.Equal(t, expected, formatter(inUnixTime), "seconds")
 	assert.Equal(t, expected, formatter(inUnixTime*1000), "milliseconds")
@@ -206,8 +205,9 @@ func TestFormatUnixTime(t *testing.T) {
 	assert.Equal(t, "0.123456", formatter(float32(0.123456)))
 }
 
-func TestFormatURL(t *testing.T) {
+func TestNewURLFormatter(t *testing.T) {
 	url := "https://winter.is.coming"
+	formatter := NewURLFormatter()
 
-	assert.Equal(t, colorsURL.Sprint(url), FormatURL(url))
+	assert.Equal(t, colorsURL.Sprint(url), formatter(url))
 }
