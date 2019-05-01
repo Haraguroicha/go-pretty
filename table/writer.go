@@ -27,6 +27,7 @@ type Writer interface {
 	SetColors(colors []text.Colors)
 	SetColorsFooter(colors []text.Colors)
 	SetColorsHeader(colors []text.Colors)
+	SetColumnConfig(configs []ColumnConfig)
 	SetHTMLCSSClass(cssClass string)
 	SetIndexColumn(colNum int)
 	SetOutputMirror(mirror io.Writer)

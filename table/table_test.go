@@ -369,6 +369,15 @@ func TestTable_SetColorsHeader(t *testing.T) {
 	assert.Equal(t, 2, len(table.colorsHeader))
 }
 
+func TestTable_SetColumnConfig(t *testing.T) {
+	table := Table{}
+	assert.Empty(t, table.columnConfigs)
+
+	table.SetColumnConfig([]ColumnConfig{{}, {}, {}})
+	assert.NotEmpty(t, table.columnConfigs)
+	assert.Equal(t, 3, len(table.columnConfigs))
+}
+
 func TestTable_SetHTMLCSSClass(t *testing.T) {
 	table := Table{}
 	table.AppendRow(testRows[0])

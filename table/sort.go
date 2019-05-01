@@ -11,7 +11,6 @@ type SortBy struct {
 	// If a Header is not provided, or the name is not found in the header, this
 	// will not work.
 	Name string
-
 	// Number is the Column # from left. When specified, it overrides the Name
 	// property. If you know the exact Column number, use this instead of Name.
 	Number int

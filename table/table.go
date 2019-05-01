@@ -42,6 +42,8 @@ type Table struct {
 	colorsHeader []text.Colors
 	// columnIsNonNumeric stores if a column contains non-numbers in all rows
 	columnIsNonNumeric []bool
+	// columnConfigs stores the custom-configuration for 1 or more columns
+	columnConfigs []ColumnConfig
 	// htmlCSSClass stores the HTML CSS Class to use on the <table> node
 	htmlCSSClass string
 	// indexColumn stores the number of the column considered as the "index"
@@ -165,6 +167,11 @@ func (t *Table) SetColorsFooter(colors []text.Colors) {
 // SetColorsHeader sets the colors for the rows in the Header.
 func (t *Table) SetColorsHeader(colors []text.Colors) {
 	t.colorsHeader = colors
+}
+
+// SetColumnConfig sets the configs for each Column.
+func (t *Table) SetColumnConfig(configs []ColumnConfig) {
+	t.columnConfigs = configs
 }
 
 // SetHTMLCSSClass sets the the HTML CSS Class to use on the <table> node
