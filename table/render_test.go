@@ -513,11 +513,12 @@ func TestTable_Render_RowPainter(t *testing.T) {
 	tw.AppendFooter(testFooter)
 	tw.SetIndexColumn(1)
 	tw.SetRowPainter(RowPainter(func(row Row) text.Colors {
-		salary := row[3].(int)
-		if salary > 3000 {
-			return text.Colors{text.BgYellow, text.FgBlack}
-		} else if salary < 2000 {
-			return text.Colors{text.BgRed, text.FgBlack}
+		if salary, ok := row[3].(int); ok {
+			if salary > 3000 {
+				return text.Colors{text.BgYellow, text.FgBlack}
+			} else if salary < 2000 {
+				return text.Colors{text.BgRed, text.FgBlack}
+			}
 		}
 		return nil
 	}))
