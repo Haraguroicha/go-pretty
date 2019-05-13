@@ -30,7 +30,7 @@ func (t *Table) Render() string {
 		t.renderRowsHeader(&out)
 
 		// (data) rows
-		t.renderRows(&out, t.getRowsSorted(), renderHint{})
+		t.renderRows(&out, t.rows, renderHint{})
 
 		// footer rows
 		t.renderRowsFooter(&out)

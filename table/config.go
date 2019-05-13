@@ -19,14 +19,14 @@ type ColumnConfig struct {
 	Align text.Align
 	// AlignFooter defines the horizontal alignment of Footer rows
 	AlignFooter text.Align
-	// AlignFooter defines the horizontal alignment of Header rows
+	// AlignHeader defines the horizontal alignment of Header rows
 	AlignHeader text.Align
 
 	// Colors defines the colors to be used on the column
 	Colors text.Colors
 	// ColorsFooter defines the colors to be used on the column in Footer rows
 	ColorsFooter text.Colors
-	// ColorsFooter defines the colors to be used on the column in Header rows
+	// ColorsHeader defines the colors to be used on the column in Header rows
 	ColorsHeader text.Colors
 
 	// Formatter is a custom-function that changes the way the value gets
@@ -35,7 +35,7 @@ type ColumnConfig struct {
 	Formatter text.Formatter
 	// FormatterFooter is like Formatter for Footer rows
 	FormatterFooter text.Formatter
-	// FormatterFooter is like Formatter for Header rows
+	// FormatterHeader is like Formatter for Header rows
 	FormatterHeader text.Formatter
 
 	// VAlign defines the vertical alignment

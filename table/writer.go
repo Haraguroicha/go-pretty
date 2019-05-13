@@ -1,8 +1,9 @@
 package table
 
 import (
-	"github.com/jedib0t/go-pretty/text"
 	"io"
+
+	"github.com/jedib0t/go-pretty/text"
 )
 
 // Writer declares the interfaces that can be used to setup and render a table.
@@ -16,37 +17,39 @@ type Writer interface {
 	RenderCSV() string
 	RenderHTML() string
 	RenderMarkdown() string
-	// deprecated
-	SetAlign(align []text.Align)
-	// deprecated
-	SetAlignFooter(align []text.Align)
-	// deprecated
-	SetAlignHeader(align []text.Align)
-	// deprecated
-	SetAllowedColumnLengths(lengths []int)
 	SetAllowedRowLength(length int)
 	SetAutoIndex(autoIndex bool)
 	SetCaption(format string, a ...interface{})
-	// deprecated
-	SetColors(colors []text.Colors)
-	// deprecated
-	SetColorsFooter(colors []text.Colors)
-	// deprecated
-	SetColorsHeader(colors []text.Colors)
 	SetColumnConfigs(configs []ColumnConfig)
 	SetHTMLCSSClass(cssClass string)
 	SetIndexColumn(colNum int)
 	SetOutputMirror(mirror io.Writer)
 	SetPageSize(numLines int)
+	SetRowPainter(painter RowPainter)
 	SetStyle(style Style)
-	// deprecated
-	SetVAlign(vAlign []text.VAlign)
-	// deprecated
-	SetVAlignFooter(vAlign []text.VAlign)
-	// deprecated
-	SetVAlignHeader(vAlign []text.VAlign)
 	SortBy(sortBy []SortBy)
 	Style() *Style
+
+	// deprecated; use SetColumnOptions instead
+	SetAlign(align []text.Align)
+	// deprecated; use SetColumnOptions instead
+	SetAlignFooter(align []text.Align)
+	// deprecated; use SetColumnOptions instead
+	SetAlignHeader(align []text.Align)
+	// deprecated; use SetColumnOptions instead
+	SetAllowedColumnLengths(lengths []int)
+	// deprecated; use SetColumnOptions instead
+	SetColors(colors []text.Colors)
+	// deprecated; use SetColumnOptions instead
+	SetColorsFooter(colors []text.Colors)
+	// deprecated; use SetColumnOptions instead
+	SetColorsHeader(colors []text.Colors)
+	// deprecated; use SetColumnOptions instead
+	SetVAlign(vAlign []text.VAlign)
+	// deprecated; use SetColumnOptions instead
+	SetVAlignFooter(vAlign []text.VAlign)
+	// deprecated; use SetColumnOptions instead
+	SetVAlignHeader(vAlign []text.VAlign)
 }
 
 // NewWriter initializes and returns a Writer.

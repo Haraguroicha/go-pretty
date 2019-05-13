@@ -2,12 +2,13 @@ package text
 
 import (
 	"fmt"
-	"github.com/go-openapi/strfmt"
-	"github.com/stretchr/testify/assert"
 	"reflect"
 	"strings"
 	"testing"
 	"time"
+
+	"github.com/go-openapi/strfmt"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestNewNumberFormatter(t *testing.T) {
@@ -179,6 +180,7 @@ func TestNewUnixTimeFormatter(t *testing.T) {
 	assert.Nil(t, err)
 	formatter := NewUnixTimeFormatter(time.RFC3339, location)
 	expected := "2010-11-12T12:14:15-08:00"
+	assert.Equal(t, expected, formatter(fmt.Sprint(inUnixTime)), "seconds in string")
 	assert.Equal(t, expected, formatter(inUnixTime), "seconds")
 	assert.Equal(t, expected, formatter(inUnixTime*1000), "milliseconds")
 	assert.Equal(t, expected, formatter(inUnixTime*1000000), "microseconds")
@@ -188,6 +190,7 @@ func TestNewUnixTimeFormatter(t *testing.T) {
 	assert.Nil(t, err)
 	formatter = NewUnixTimeFormatter(time.UnixDate, location)
 	expected = "Sat Nov 13 04:14:15 +08 2010"
+	assert.Equal(t, expected, formatter(fmt.Sprint(inUnixTime)), "seconds in string")
 	assert.Equal(t, expected, formatter(inUnixTime), "seconds")
 	assert.Equal(t, expected, formatter(inUnixTime*1000), "milliseconds")
 	assert.Equal(t, expected, formatter(inUnixTime*1000000), "microseconds")
@@ -197,6 +200,7 @@ func TestNewUnixTimeFormatter(t *testing.T) {
 	assert.Nil(t, err)
 	formatter = NewUnixTimeFormatter(time.RFC3339, location)
 	expected = "2010-11-12T20:14:15Z"
+	assert.Equal(t, expected, formatter(fmt.Sprint(inUnixTime)), "seconds in string")
 	assert.Equal(t, expected, formatter(inUnixTime), "seconds")
 	assert.Equal(t, expected, formatter(inUnixTime*1000), "milliseconds")
 	assert.Equal(t, expected, formatter(inUnixTime*1000000), "microseconds")

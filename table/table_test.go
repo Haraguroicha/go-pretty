@@ -371,7 +371,7 @@ func TestTable_SetColorsHeader(t *testing.T) {
 	assert.Equal(t, 2, len(table.colorsHeader))
 }
 
-func TestTable_SetColumnConfig(t *testing.T) {
+func TestTable_SetColumnConfigs(t *testing.T) {
 	table := Table{}
 	assert.Empty(t, table.columnConfigs)
 

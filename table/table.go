@@ -12,6 +12,10 @@ import (
 // Row defines a single row in the Table.
 type Row []interface{}
 
+// RowPainter is a custom function that takes a Row as input and returns the
+// text.Colors{} to use on the entire row
+type RowPainter func(row Row) text.Colors
+
 // rowStr defines a single row in the Table comprised of just string objects.
 type rowStr []string
 
@@ -68,6 +72,9 @@ type Table struct {
 	pageSize int
 	// rows stores the rows that make up the body (in string form)
 	rows []rowStr
+	// rowsColors stores the text.Colors over-rides for each row as defined by
+	// rowPainter
+	rowsColors []text.Colors
 	// rowsRaw stores the rows that make up the body
 	rowsRaw []Row
 	// rowsFooter stores the rows that make up the footer (in string form)
@@ -78,6 +85,9 @@ type Table struct {
 	rowsHeader []rowStr
 	// rowsHeaderRaw stores the rows that make up the header
 	rowsHeaderRaw []Row
+	// rowPainter is a custom function that given a Row, returns the colors to
+	// use on the entire row
+	rowPainter RowPainter
 	// rowSeparator is a dummy row that contains the separator columns (dashes
 	// that make up the separator between header/body/footer
 	rowSeparator rowStr
@@ -223,6 +233,11 @@ func (t *Table) SetPageSize(numLines int) {
 	t.pageSize = numLines
 }
 
+// SetRowPainter sets the RowPainter override.
+func (t *Table) SetRowPainter(painter RowPainter) {
+	t.rowPainter = painter
+}
+
 // SetStyle overrides the DefaultStyle with the provided one.
 func (t *Table) SetStyle(style Style) {
 	t.style = &style
@@ -316,7 +331,8 @@ func (t *Table) getAlign(colIdx int, hint renderHint) text.Align {
 		} else {
 			align = cfg.Align
 		}
-	} else {
+	}
+	if align == text.AlignDefault {
 		align = t.getAlignOld(colIdx, hint)
 	}
 	if align == text.AlignDefault && !t.columnIsNonNumeric[colIdx] {
@@ -349,7 +365,22 @@ func (t *Table) getAutoIndexColumnIDs() rowStr {
 	return row
 }
 
+func (t *Table) getBorderColors(hint renderHint) text.Colors {
+	if hint.isFooterRow {
+		return t.style.Color.Footer
+	} else if t.autoIndex {
+		return t.style.Color.IndexColumn
+	}
+	return t.style.Color.Header
+}
+
 func (t *Table) getColumnColors(colIdx int, hint renderHint) text.Colors {
+	if t.rowPainter != nil && hint.isRegularRow() && !t.isIndexColumn(colIdx, hint) {
+		colors := t.rowsColors[hint.rowNumber-1]
+		if colors != nil {
+			return colors
+		}
+	}
 	if cfg, ok := t.columnConfigMap[colIdx]; ok {
 		if hint.isSeparatorRow {
 			return nil
@@ -420,28 +451,6 @@ func (t *Table) getRowColors(hint renderHint) []text.Colors {
 	return t.colors
 }
 
-func (t *Table) getRowsSorted() []rowStr {
-	if t.sortBy == nil || len(t.sortBy) == 0 {
-		return t.rows
-	}
-
-	sortedRowIndices := t.getSortedRowIndices()
-	sortedRows := make([]rowStr, len(t.rows))
-	for idx := range t.rows {
-		sortedRows[idx] = t.rows[sortedRowIndices[idx]]
-	}
-	return sortedRows
-}
-
-func (t *Table) getBorderColors(hint renderHint) text.Colors {
-	if hint.isFooterRow {
-		return t.style.Color.Footer
-	} else if t.autoIndex {
-		return t.style.Color.IndexColumn
-	}
-	return t.style.Color.Header
-}
-
 func (t *Table) getSeparatorColors(hint renderHint) text.Colors {
 	if hint.isHeaderRow {
 		return t.style.Color.Header
@@ -465,7 +474,8 @@ func (t *Table) getVAlign(colIdx int, hint renderHint) text.VAlign {
 		} else {
 			vAlign = cfg.VAlign
 		}
-	} else {
+	}
+	if vAlign == text.VAlignDefault {
 		vAlign = t.getVAlignOld(colIdx, hint)
 	}
 	return vAlign
@@ -570,14 +580,38 @@ func (t *Table) initForRenderColumnLengths() {
 }
 
 func (t *Table) initForRenderRows() {
+	t.rowsColors = nil
+	if t.rowPainter != nil {
+		t.rowsColors = make([]text.Colors, len(t.rowsRaw))
+	}
 	t.rows = t.initForRenderRowsStringify(t.rowsRaw, renderHint{})
 	t.rowsFooter = t.initForRenderRowsStringify(t.rowsFooterRaw, renderHint{isFooterRow: true})
 	t.rowsHeader = t.initForRenderRowsStringify(t.rowsHeaderRaw, renderHint{isHeaderRow: true})
+
+	// sort rows and rowsColors
+	if len(t.sortBy) > 0 {
+		sortedRowIndices := t.getSortedRowIndices()
+		sortedRows := make([]rowStr, len(t.rows))
+		for idx := range t.rows {
+			sortedRows[idx] = t.rows[sortedRowIndices[idx]]
+		}
+		t.rows = sortedRows
+		if t.rowsColors != nil {
+			sortedRowsColors := make([]text.Colors, len(t.rows))
+			for idx := range t.rows {
+				sortedRowsColors[idx] = t.rowsColors[sortedRowIndices[idx]]
+			}
+			t.rowsColors = sortedRowsColors
+		}
+	}
 }
 
 func (t *Table) initForRenderRowsStringify(rows []Row, hint renderHint) []rowStr {
 	rowsStr := make([]rowStr, len(rows))
 	for idx, row := range rows {
+		if t.rowPainter != nil && hint.isRegularRow() {
+			t.rowsColors[idx] = t.rowPainter(row)
+		}
 		rowsStr[idx] = t.analyzeAndStringify(row, hint)
 	}
 	return rowsStr
@@ -593,6 +627,10 @@ func (t *Table) initForRenderRowSeparator() {
 		t.maxRowLength += maxColumnLength
 		t.rowSeparator[colIdx] = horizontalSeparatorCol
 	}
+}
+
+func (t *Table) isIndexColumn(colIdx int, hint renderHint) bool {
+	return t.indexColumn == colIdx+1 || hint.isAutoIndexColumn
 }
 
 func (t *Table) render(out *strings.Builder) string {

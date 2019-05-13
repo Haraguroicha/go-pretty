@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"strconv"
 	"strings"
 	"time"
 
@@ -158,17 +159,24 @@ func NewTimeFormatter(layout string, location *time.Location) Formatter {
 // location (use time.Local to get localized timestamps).
 func NewUnixTimeFormatter(layout string, location *time.Location) Formatter {
 	timeFormatter := NewTimeFormatter(layout, location)
+	formatUnixTime := func(unixTime int64) string {
+		if unixTime >= unixTimeMinNanoSeconds {
+			unixTime = unixTime / time.Second.Nanoseconds()
+		} else if unixTime >= unixTimeMinMicroseconds {
+			unixTime = unixTime / (time.Second.Nanoseconds() / 1000)
+		} else if unixTime >= unixTimeMinMilliseconds {
+			unixTime = unixTime / (time.Second.Nanoseconds() / 1000000)
+		}
+		return timeFormatter(time.Unix(unixTime, 0))
+	}
 
 	return func(val interface{}) string {
 		if unixTime, ok := val.(int64); ok {
-			if unixTime >= unixTimeMinNanoSeconds {
-				unixTime = unixTime / time.Second.Nanoseconds()
-			} else if unixTime >= unixTimeMinMicroseconds {
-				unixTime = unixTime / (time.Second.Nanoseconds() / 1000)
-			} else if unixTime >= unixTimeMinMilliseconds {
-				unixTime = unixTime / (time.Second.Nanoseconds() / 1000000)
+			return formatUnixTime(unixTime)
+		} else if unixTimeStr, ok := val.(string); ok {
+			if unixTime, err := strconv.ParseInt(unixTimeStr, 10, 64); err == nil {
+				return formatUnixTime(unixTime)
 			}
-			return timeFormatter(time.Unix(unixTime, 0))
 		}
 		return fmt.Sprint(val)
 	}
